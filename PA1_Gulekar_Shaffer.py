@@ -14,6 +14,8 @@ message = ''
 times_passed = []
 lost_packets = 0
 array_size = 0
+
+estRTT = 0
 for x in range(0, 10):
     try:
         currentDT = datetime.datetime.now()
@@ -24,6 +26,7 @@ for x in range(0, 10):
         times_passed.append(time.time() - start_time)
         print('Server message: ' + modifiedMessage)
         print('Round Trip Time for packet ' + str(x) + ': ' + str(times_passed[array_size]))
+        estRTT = (1 - 0.125) * estRTT + 0.125 * times_passed[array_size]
         array_size = array_size + 1
     except timeout:
         print('Request timed out')
@@ -35,6 +38,5 @@ print('Packet Loss: ' + str(packet_loss))
 print('Max Round Trip Time: ' + str(max(times_passed)))
 print('Min Round Trip Time: ' + str(min(times_passed)))
 print('Average Round Trip Time: ' + str(reduce(lambda z, y: z + y, times_passed) / len(times_passed)))
-#https://networkengineering.stackexchange.com/questions/42143/what-is-the-value-of-estimatedrtt-at-first-time
-print('Estimated Round Trip Time: ' + str((1 - 0.125) * times_passed[0] + 0.125 * times_passed[1]))
+print('Estimated Round Trip Time: ' + str(estRTT))
 clientSocket.close()
